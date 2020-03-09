@@ -83,7 +83,29 @@ void TempGraph::on_btn_del_clicked()
 
 void TempGraph::on_btn_reset_clicked()
 {
-    series->clear();
-    tmrupgraph->stop();
-    sec = 0;
+    if(gon == true)
+    {
+        gon = false;
+        series->clear();
+        tmrupgraph->stop();
+        sec = 0;
+    }
+    else
+    {
+        QMessageBox::information(this,"Предупреждение","График уже не отображается");
+    }
+}
+
+void TempGraph::on_btn_begin_clicked()
+{
+    if(gon == true)
+    {
+        QMessageBox::information(this,"Предупреждение","График уже  отображается");
+    }
+    else
+    {
+        *series<<QPoint(0,0);
+        tmrupgraph->start();
+        gon = true;
+    }
 }
