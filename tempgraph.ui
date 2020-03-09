@@ -6,108 +6,50 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>1255</width>
+    <height>866</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>TempGraph</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QPushButton" name="btn_query">
-    <property name="geometry">
-     <rect>
-      <x>630</x>
-      <y>90</y>
-      <width>161</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Запрос данных от МК</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="btn_del">
-    <property name="geometry">
-     <rect>
-      <x>630</x>
-      <y>330</y>
-      <width>161</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Уменьшить график</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="btn_add">
-    <property name="geometry">
-     <rect>
-      <x>630</x>
-      <y>280</y>
-      <width>161</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Увеличить график</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="btn_stopquery">
-    <property name="geometry">
-     <rect>
-      <x>630</x>
-      <y>140</y>
-      <width>161</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Отсановка запроса</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="btn_reset">
-    <property name="geometry">
-     <rect>
-      <x>660</x>
-      <y>400</y>
-      <width>121</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Сброс графика</string>
-    </property>
-   </widget>
-   <widget class="QSpinBox" name="box_data">
-    <property name="geometry">
-     <rect>
-      <x>630</x>
-      <y>230</y>
-      <width>42</width>
-      <height>26</height>
-     </rect>
-    </property>
-    <property name="maximum">
-     <number>4</number>
-    </property>
-   </widget>
    <widget class="QWidget" name="horizontalLayoutWidget">
     <property name="geometry">
      <rect>
       <x>10</x>
       <y>60</y>
-      <width>611</width>
-      <height>451</height>
+      <width>1051</width>
+      <height>691</height>
      </rect>
     </property>
-    <layout class="QHBoxLayout" name="h_latout"/>
+    <layout class="QHBoxLayout" name="h_latout">
+     <property name="spacing">
+      <number>10</number>
+     </property>
+     <property name="sizeConstraint">
+      <enum>QLayout::SetMaximumSize</enum>
+     </property>
+    </layout>
    </widget>
-   <widget class="QLabel" name="label">
+   <widget class="QLabel" name="lbl">
     <property name="geometry">
      <rect>
-      <x>100</x>
-      <y>520</y>
+      <x>30</x>
+      <y>770</y>
+      <width>301</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Отладочный вывод времени в секундах:</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lbl_temp">
+    <property name="geometry">
+     <rect>
+      <x>400</x>
+      <y>800</y>
       <width>67</width>
       <height>17</height>
      </rect>
@@ -116,17 +58,97 @@
      <string>TextLabel</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_2">
+   <widget class="QWidget" name="verticalLayoutWidget">
     <property name="geometry">
      <rect>
-      <x>240</x>
-      <y>520</y>
-      <width>67</width>
+      <x>1080</x>
+      <y>60</y>
+      <width>171</width>
+      <height>441</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="layout_btn">
+     <property name="spacing">
+      <number>0</number>
+     </property>
+     <property name="sizeConstraint">
+      <enum>QLayout::SetMaximumSize</enum>
+     </property>
+     <item>
+      <widget class="QPushButton" name="btn_query">
+       <property name="text">
+        <string>Запрос данных от МК</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btn_stopquery">
+       <property name="text">
+        <string>Отсановка запроса</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="box_data">
+       <property name="maximum">
+        <number>4</number>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btn_add">
+       <property name="text">
+        <string>Увеличить график</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btn_del">
+       <property name="text">
+        <string>Уменьшить график</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btn_begin">
+       <property name="text">
+        <string>Начало построения</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btn_reset">
+       <property name="text">
+        <string>Сброс графика</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QLabel" name="lbl_time">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>800</y>
+      <width>291</width>
       <height>17</height>
      </rect>
     </property>
     <property name="text">
-     <string>TextLabel</string>
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_3">
+    <property name="geometry">
+     <rect>
+      <x>360</x>
+      <y>770</y>
+      <width>421</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Отладочное значение графика(отрисовка не всегда точна)</string>
     </property>
    </widget>
   </widget>
@@ -135,7 +157,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>1255</width>
      <height>22</height>
     </rect>
    </property>

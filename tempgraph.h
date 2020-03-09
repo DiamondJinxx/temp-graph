@@ -5,6 +5,7 @@
 #include <QtCharts/QChart>
 #include <QtCharts/QtCharts>
 #include <QTimer>
+#include <QtDebug>
 
 //using namespace QtCharts;
 QT_BEGIN_NAMESPACE
@@ -15,9 +16,6 @@ class TempGraph : public QMainWindow
 {
     Q_OBJECT
 
-public:
-    TempGraph(QWidget *parent = nullptr);
-    ~TempGraph();
     QChartView* chartView;
     QChart* chart;
     int temp = 0; // текущая температура графика
@@ -25,8 +23,12 @@ public:
     QTimer* tmrX;
     QTimer* tmrupgraph;
     QLineSeries* series;
-    QValueAxis *axisX;
-    QValueAxis *axisY;
+    QValueAxis *axesX;
+    QValueAxis *axesY;
+
+public:
+    TempGraph(QWidget *parent = nullptr);
+    ~TempGraph();
 
 private slots:
     void updateGraph();

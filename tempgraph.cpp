@@ -11,8 +11,8 @@ TempGraph::TempGraph(QWidget *parent)
     series    = new QLineSeries();
     chartView = new QChartView(chart);
     chart     = new QChart();
-    axisX     = new QValueAxis();
-    axisY     = new QValueAxis();
+    axesX     = new QValueAxis();
+    axesY     = new QValueAxis();
 
     tmrX->setInterval(1000);
     tmrupgraph->setInterval(500);
@@ -20,17 +20,17 @@ TempGraph::TempGraph(QWidget *parent)
     chart->addSeries(series);
     chart->legend()->hide();
     chart->setTitle("Температура с МК");
-    axisX->setTitleText("Время,сек");
-    axisX->setLabelFormat("%d");
-    axisX->setTickCount(15);
-    axisY->setTickCount(15);
-    axisY->setTitleText("Температура, градусы С");
-    axisY->setLabelFormat("%d");
-    chart->addAxis(axisX,Qt::AlignBottom);
-    series->attachAxis(axisX);// подключаем ось к значениям
-    chart->addAxis(axisY,Qt::AlignLeft);
-    series->attachAxis(axisY);// подключаем ось к значениям
-
+    axesX->setTitleText("Время,сек");
+    axesX->setLabelFormat("%0.2f");
+    axesX->setTickCount(15);
+    axesY->setTickCount(21);
+    axesY->setTitleText("Температура, градусы С");
+    axesY->setLabelFormat("%0.2f");
+    chart->addAxis(axesX,Qt::AlignBottom);
+    series->attachAxis(axesX);// подключаем ось к значениям
+    chart->addAxis(axesY,Qt::AlignLeft);
+    series->attachAxis(axesY);// подключаем ось к значениям
+    *series<<QPoint(0,0);// добавляем начальную току, чтобы рисовалось от начала координат
     chartView->setChart(chart);
 
     ui->h_latout->addWidget(chartView);
@@ -45,22 +45,30 @@ TempGraph::~TempGraph()
 
 void TempGraph::updateGraph()
 {
+    /*
+     *  вызов метода repaint у представления должен вызываться автоматически
+     *  никакого использования нового графика с дополнительным выделением памяти
+     *  добавление в серию точки и очередная ее отрисовка
+    */
     sec++;
-//    temp += ui->box_data->value();
-    //QLineSeries* series1 = new QLineSeries();
-    //*series1<<QPoint(sec,temp);
     *series<<(QPoint(sec,temp));
+    /*  оси чарта хранятся объектом класса QList, метод back() - аналог метода last()
+     *	а так как чарт может иметь более одной оси, то таким образом мы общаемся к нашей оси(она единственная)
+     * и сдвигаем ее.
+    */
+    chart->axes(Qt::Vertical).back()->setRange(-30,+30);
+    chart->axes(Qt::Horizontal).back()->setRange(0,sec+10);
+    /*
     chart->removeSeries(series);
     chart->addSeries(series);
-    //chartView->update(); //ему похер на эти обновления представления и самого чарта
-    //chart->update();
-    axisX->setMax(sec+5);
-    axisY->setMax(50);
-    series->attachAxis(axisX);
-    series->attachAxis(axisY);
-    ui->label->setText(QString::number(sec));
-    ui->label_2->setText(QString::number(temp));
-   //chartView->setChart(chart);
+    axesX->setMax(sec+5);
+    axesY->setMax(50);
+    series->attachAxis(axesX);
+    series->attachAxis(axesY);
+    */
+    ui->lbl_time->setText(QString::number(sec));
+    ui->lbl_temp->setText(QString::number(temp));
+   // qDebug() << series->pointsVector();
 }
 void TempGraph::on_btn_add_clicked()
 {
@@ -75,5 +83,7 @@ void TempGraph::on_btn_del_clicked()
 
 void TempGraph::on_btn_reset_clicked()
 {
-
+    series->clear();
+    tmrupgraph->stop();
+    sec = 0;
 }
