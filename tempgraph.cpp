@@ -36,6 +36,7 @@ TempGraph::TempGraph(QWidget *parent)
     ui->h_latout->addWidget(chartView);
     connect(tmrupgraph,SIGNAL(timeout()),this,SLOT(updateGraph()));
     tmrupgraph->start();
+    serialPortInfo();
 }
 
 TempGraph::~TempGraph()
@@ -108,4 +109,26 @@ void TempGraph::on_btn_begin_clicked()
         tmrupgraph->start();
         gon = true;
     }
+}
+
+void TempGraph::serialPortInfo()
+{
+    /*
+     * функция для вывода информации о доступных com-портах
+     * для вывода тестово используем диалоговое окно
+    */
+    QString info;
+    qDebug()<<QSerialPortInfo::availablePorts().length()<<"\n";
+    qDebug()<<"Описание каждого пора в отдельности:\n";
+    /* константная ссылка - дает доступ к элементу без возможности его изменение(только для чтения) */
+    foreach (const QSerialPortInfo& portInfo, QSerialPortInfo::availablePorts() )
+    {
+       qDebug()<<"Описание: "<<portInfo.description()<<"\n";
+       qDebug()<<"Имеется vendor id?: "<<portInfo.hasVendorIdentifier()<<"\n";
+       qDebug()<<"Сам vendor: "<<portInfo.vendorIdentifier()<<"\n";
+       qDebug()<<"Имеется Devics id?: "<<portInfo.hasProductIdentifier()<<"\n";
+       qDebug()<<"Device Id: "<<portInfo.productIdentifier()<<"\n";
+
+    }
+   // msg->setText();
 }

@@ -7,6 +7,10 @@
 #include <QTimer>
 #include <QtDebug>
 #include <QMessageBox>
+#include <QSerialPortInfo>
+#include <QSerialPort>
+#include <QtSerialPort>
+#include <QString>
 
 //using namespace QtCharts;
 QT_BEGIN_NAMESPACE
@@ -43,6 +47,8 @@ private slots:
     void on_btn_reset_clicked();
 
     void on_btn_begin_clicked();
+
+    void serialPortInfo();
 
 private:
     Ui::TempGraph *ui;
