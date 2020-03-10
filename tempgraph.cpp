@@ -36,7 +36,6 @@ TempGraph::TempGraph(QWidget *parent)
     ui->h_latout->addWidget(chartView);
     connect(tmrupgraph,SIGNAL(timeout()),this,SLOT(updateGraph()));
     tmrupgraph->start();
-    serialPortInfo();
 }
 
 TempGraph::~TempGraph()
@@ -117,9 +116,10 @@ void TempGraph::serialPortInfo()
      * функция для вывода информации о доступных com-портах
      * для вывода тестово используем диалоговое окно
     */
+    QMessageBox * msg;
     QString info;
     //const QSerialPortInfo port;
-    info.append(QString::number(QSerialPortInfo::availablePorts().length())+"\n");
+    info.append("Количество доступных портов:\t"+QString::number(QSerialPortInfo::availablePorts().length())+"\n");
     qDebug()<<QSerialPortInfo::availablePorts().length()<<"\n";
     qDebug()<<"Описание каждого пора в отдельности:\n";
     /* константная ссылка - дает доступ к элементу без возможности его изменение(только для чтения) */
@@ -130,16 +130,22 @@ void TempGraph::serialPortInfo()
        qDebug()<<"Сам vendor: "<<portInfo.vendorIdentifier()<<"\n";
        qDebug()<<"Имеется Devics id?: "<<portInfo.hasProductIdentifier()<<"\n";
        qDebug()<<"Device Id: "<<portInfo.productIdentifier()<<"\n";
-       info.append(portInfo.description()+"\n");
-       QString hasVendor = portInfo.hasVendorIdentifier() ? "true":"false";
-       QString hasDevice = portInfo.hasProductIdentifier() ? "true":"false";
-       info.append(hasVendor+"\n");
-       info.append(QString::number(portInfo.vendorIdentifier())+"\n");
-       info.append(hasDevice+"\n");
-       info.append(QString::number(portInfo.productIdentifier())+"\n");
+       info.append("Описание порта:\t"+portInfo.description()+"\n");
+       QString hasVendor = portInfo.hasVendorIdentifier() ? "имеется":"не имеется";
+       QString hasDevice = portInfo.hasProductIdentifier() ? "имеется":"не имееется";
+       info.append("Наличие Vendor ID:\t"+hasVendor+"\n");
+       info.append("Vendor ID:\t"+QString::number(portInfo.vendorIdentifier())+"\n");
+       info.append("Наличие Device ID:\t"+hasDevice+"\n");
+       info.append("QVendor ID:\t"+QString::number(portInfo.productIdentifier())+"\n");
 
     }
     msg = new QMessageBox();
     msg->setText(info);
+    msg->setWindowTitle("Информация о доступных портах");
     msg->show();
+}
+
+void TempGraph::on_btn_portInfo_clicked()
+{
+   serialPortInfo();
 }

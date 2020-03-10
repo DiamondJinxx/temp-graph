@@ -32,7 +32,7 @@ class TempGraph : public QMainWindow
     QLineSeries* series;
     QValueAxis *axesX;
     QValueAxis *axesY;
-    QMessageBox *msg;
+  //  QMessageBox *msg;
 
 public:
     TempGraph(QWidget *parent = nullptr);
@@ -49,6 +49,8 @@ private slots:
     void on_btn_begin_clicked();
 
     void serialPortInfo();
+
+    void on_btn_portInfo_clicked();
 
 private:
     Ui::TempGraph *ui;

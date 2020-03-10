@@ -63,7 +63,7 @@
      <rect>
       <x>1080</x>
       <y>60</y>
-      <width>171</width>
+      <width>250</width>
       <height>441</height>
      </rect>
     </property>
@@ -120,6 +120,13 @@
       <widget class="QPushButton" name="btn_reset">
        <property name="text">
         <string>Сброс графика</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btn_portInfo">
+       <property name="text">
+        <string>Информация о портах</string>
        </property>
       </widget>
      </item>
