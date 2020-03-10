@@ -119,17 +119,17 @@ void TempGraph::serialPortInfo()
     QMessageBox * msg;
     QString info;
     //const QSerialPortInfo port;
-    info.append("Количество доступных портов:\t"+QString::number(QSerialPortInfo::availablePorts().length())+"\n");
+    info.append("Количество доступных портов:\t"+QString::number(QSerialPortInfo::availablePorts().length())+"\n\n");
     qDebug()<<QSerialPortInfo::availablePorts().length()<<"\n";
     qDebug()<<"Описание каждого пора в отдельности:\n";
     /* константная ссылка - дает доступ к элементу без возможности его изменение(только для чтения) */
     foreach (const QSerialPortInfo& portInfo, QSerialPortInfo::availablePorts() )
     {
-       qDebug()<<"Описание: "<<portInfo.description()<<"\n";
-       qDebug()<<"Имеется vendor id?: "<<portInfo.hasVendorIdentifier()<<"\n";
-       qDebug()<<"Сам vendor: "<<portInfo.vendorIdentifier()<<"\n";
-       qDebug()<<"Имеется Devics id?: "<<portInfo.hasProductIdentifier()<<"\n";
-       qDebug()<<"Device Id: "<<portInfo.productIdentifier()<<"\n";
+     //  qDebug()<<"Описание: "<<portInfo.description()<<"\n";
+     //  qDebug()<<"Имеется vendor id?: "<<portInfo.hasVendorIdentifier()<<"\n";
+     //qDebug()<<"Сам vendor: "<<portInfo.vendorIdentifier()<<"\n";
+     //  qDebug()<<"Имеется Devics id?: "<<portInfo.hasProductIdentifier()<<"\n";
+     //  qDebug()<<"Device Id: "<<portInfo.productIdentifier()<<"\n";
        info.append("Описание порта:\t"+portInfo.description()+"\n");
        QString hasVendor = portInfo.hasVendorIdentifier() ? "имеется":"не имеется";
        QString hasDevice = portInfo.hasProductIdentifier() ? "имеется":"не имееется";
@@ -137,7 +137,7 @@ void TempGraph::serialPortInfo()
        info.append("Vendor ID:\t"+QString::number(portInfo.vendorIdentifier())+"\n");
        info.append("Наличие Device ID:\t"+hasDevice+"\n");
        info.append("QVendor ID:\t"+QString::number(portInfo.productIdentifier())+"\n");
-
+       info.append("\n");
     }
     msg = new QMessageBox();
     msg->setText(info);
