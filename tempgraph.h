@@ -21,9 +21,9 @@ class TempGraph : public QMainWindow
 {
     Q_OBJECT
 
+    int ports_count	 = 0;
     int temp = 0; // текущая температура графика
     int sec  = 0; // секунды графика
-    int g	 = 1;
     bool gon = true; // контроль вывода графика
     bool port_is_available = false; // контроль соединения с выбранным портом.
     QStandardItemModel *modelOut; // модель вывода в бокс портов

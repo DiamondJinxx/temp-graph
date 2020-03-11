@@ -169,7 +169,11 @@
     </property>
     <layout class="QVBoxLayout" name="list_layout">
      <item>
-      <widget class="QTableView" name="tblOut"/>
+      <widget class="QTableView" name="tblOut">
+       <property name="lineWidth">
+        <number>1</number>
+       </property>
+      </widget>
      </item>
     </layout>
    </widget>

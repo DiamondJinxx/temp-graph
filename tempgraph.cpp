@@ -44,7 +44,10 @@ TempGraph::TempGraph(QWidget *parent)
 
     ui->graph_latout->addWidget(chartView);
     connect(tmrupgraph,SIGNAL(timeout()),this,SLOT(updateGraph()));
+    connect(tmr_up_ports,SIGNAL(timeout()),this,SLOT(ports_out()));
+
     tmrupgraph->start();
+    tmr_up_ports->start();
 }
 
 TempGraph::~TempGraph()
@@ -163,30 +166,36 @@ void TempGraph::on_btn_portInfo_clicked()
 
 void TempGraph::ports_out()
 {
-    int row = 0;
-    QModelIndex dsc, vndr, dev;
-    QString description, vendor, device;
-    foreach(const QSerialPortInfo& portInfo,QSerialPortInfo::availablePorts())
+    if(ports_count != QSerialPortInfo::availablePorts().length())
     {
-        //целяем нужную информацию
-        description = portInfo.description();
-        vendor      = QString::number(portInfo.vendorIdentifier());
-        device      = QString::number(portInfo.productIdentifier());
-        //по индексам в модели цепляем нужные элементы
-        row = modelOut->rowCount();
+        int row = 0;
+        QModelIndex dsc, vndr, dev;
+        QString description, vendor, device;
+        modelOut->removeRows(0,modelOut->rowCount());
+        modelOut->insertRows(0,1); // нужно, иначе не хватает строк для портов
+        ports_count = QSerialPortInfo::availablePorts().length();
+        foreach(const QSerialPortInfo& portInfo,QSerialPortInfo::availablePorts())
+        {
+            //целяем нужную информацию
+             description = portInfo.description();
+             vendor      = QString::number(portInfo.vendorIdentifier());
+             device      = QString::number(portInfo.productIdentifier());
+            //по индексам в модели цепляем нужные элементы
+             row = modelOut->rowCount();
        // qDebug() << "число столбцов: "<<row;
-        /* индексирование ведется с 0, отнимаем 1 от числа столбов */
-        dsc = modelOut->index(row - 1, 0);
-        vndr = modelOut->index(row - 1, 1);
-        dev = modelOut->index(row - 1, 2);
-        qDebug() << "indexs: " << dsc << vndr << dev;
+           /* индексирование ведется с 0, отнимаем 1 от числа столбов */
+             dsc = modelOut->index(row - 1, 0);
+             vndr = modelOut->index(row - 1, 1);
+             dev = modelOut->index(row - 1, 2);
+             qDebug() << "indexs: " << dsc << vndr << dev;
 
         //добавляем информацию в модель для вывода
-        modelOut->insertRows(row,1);
-        modelOut->setData(dsc,description);
-        modelOut->setData(vndr,vendor);
-        modelOut->setData(dev,device);
+             modelOut->insertRows(row,1);
+             modelOut->setData(dsc,description);
+             modelOut->setData(vndr,vendor);
+             modelOut->setData(dev,device);
 
-        qDebug() << description << vendor << device<<"\n";
+             qDebug() << description << vendor << device<<"\n";
+    }
     }
 }
