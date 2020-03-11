@@ -6,15 +6,21 @@ TempGraph::TempGraph(QWidget *parent)
     , ui(new Ui::TempGraph)
 {
     ui->setupUi(this);
-    tmrupgraph = new QTimer();
-    tmrX      = new QTimer(this);
-    series    = new QLineSeries();
-    chartView = new QChartView(chart);
-    chart     = new QChart();
-    axesX     = new QValueAxis();
-    axesY     = new QValueAxis();
+    /* блок инициализации  */
+    tmr_up_ports      = new QTimer(this);
+    tmrupgraph 		  = new QTimer();
+    series    		  = new QLineSeries();
+    chartView 		  = new QChartView(chart);
+    chart     		  = new QChart();
+    axesX     		  = new QValueAxis();
+    axesY     		  = new QValueAxis();
+    modelOut  		  = new QStandardItemModel(1, 3, this);
+    modelOut->setHeaderData(0,Qt::Horizontal,"Описание");
+    modelOut->setHeaderData(1,Qt::Horizontal,"Vendor");
+    modelOut->setHeaderData(2,Qt::Horizontal,"Device");
 
-    tmrX->setInterval(1000);
+    /* блок начальных установок */
+    tmr_up_ports->setInterval(1000);
     tmrupgraph->setInterval(500);
     /* соединяем серию, чарт и его представления */
     chart->addSeries(series);
@@ -32,8 +38,11 @@ TempGraph::TempGraph(QWidget *parent)
     series->attachAxis(axesY);// подключаем ось к значениям
     *series<<QPoint(0,0);// добавляем начальную току, чтобы рисовалось от начала координат
     chartView->setChart(chart);
+    ui->tblOut->setModel(modelOut);//связываем модель и представление
+    ui->tblOut->setEditTriggers(QTableView::NoEditTriggers);//запрет редактирования,можно сделать и через форму, но кто туда смотрит?
 
-    ui->h_latout->addWidget(chartView);
+
+    ui->graph_latout->addWidget(chartView);
     connect(tmrupgraph,SIGNAL(timeout()),this,SLOT(updateGraph()));
     tmrupgraph->start();
 }
@@ -137,15 +146,47 @@ void TempGraph::serialPortInfo()
        info.append("Vendor ID:\t"+QString::number(portInfo.vendorIdentifier())+"\n");
        info.append("Наличие Device ID:\t"+hasDevice+"\n");
        info.append("QVendor ID:\t"+QString::number(portInfo.productIdentifier())+"\n");
+       //info.append(portInfo.portName()+"\n");
        info.append("\n");
     }
     msg = new QMessageBox();
     msg->setText(info);
     msg->setWindowTitle("Информация о доступных портах");
     msg->show();
+    ports_out();
 }
 
 void TempGraph::on_btn_portInfo_clicked()
 {
    serialPortInfo();
+}
+
+void TempGraph::ports_out()
+{
+    int row = 0;
+    QModelIndex dsc, vndr, dev;
+    QString description, vendor, device;
+    foreach(const QSerialPortInfo& portInfo,QSerialPortInfo::availablePorts())
+    {
+        //целяем нужную информацию
+        description = portInfo.description();
+        vendor      = QString::number(portInfo.vendorIdentifier());
+        device      = QString::number(portInfo.productIdentifier());
+        //по индексам в модели цепляем нужные элементы
+        row = modelOut->rowCount();
+       // qDebug() << "число столбцов: "<<row;
+        /* индексирование ведется с 0, отнимаем 1 от числа столбов */
+        dsc = modelOut->index(row - 1, 0);
+        vndr = modelOut->index(row - 1, 1);
+        dev = modelOut->index(row - 1, 2);
+        qDebug() << "indexs: " << dsc << vndr << dev;
+
+        //добавляем информацию в модель для вывода
+        modelOut->insertRows(row,1);
+        modelOut->setData(dsc,description);
+        modelOut->setData(vndr,vendor);
+        modelOut->setData(dev,device);
+
+        qDebug() << description << vendor << device<<"\n";
+    }
 }

@@ -23,7 +23,7 @@
       <height>691</height>
      </rect>
     </property>
-    <layout class="QHBoxLayout" name="h_latout">
+    <layout class="QHBoxLayout" name="graph_latout">
      <property name="spacing">
       <number>10</number>
      </property>
@@ -142,7 +142,7 @@
      </rect>
     </property>
     <property name="text">
-     <string/>
+     <string>text</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_3">
@@ -157,6 +157,21 @@
     <property name="text">
      <string>Отладочное значение графика(отрисовка не всегда точна)</string>
     </property>
+   </widget>
+   <widget class="QWidget" name="verticalLayoutWidget_2">
+    <property name="geometry">
+     <rect>
+      <x>1080</x>
+      <y>520</y>
+      <width>251</width>
+      <height>231</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="list_layout">
+     <item>
+      <widget class="QTableView" name="tblOut"/>
+     </item>
+    </layout>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
