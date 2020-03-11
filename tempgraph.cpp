@@ -20,7 +20,7 @@ TempGraph::TempGraph(QWidget *parent)
     modelOut->setHeaderData(2,Qt::Horizontal,"Device");
 
     /* блок начальных установок */
-    tmr_up_ports->setInterval(1000);
+    tmr_up_ports->setInterval(100);
     tmrupgraph->setInterval(500);
     /* соединяем серию, чарт и его представления */
     chart->addSeries(series);
