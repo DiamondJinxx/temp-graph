@@ -64,7 +64,7 @@
       <x>1080</x>
       <y>60</y>
       <width>250</width>
-      <height>441</height>
+      <height>351</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="layout_btn">
@@ -190,6 +190,32 @@
       </widget>
      </item>
     </layout>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>1090</x>
+      <y>430</y>
+      <width>191</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Индикация соедиинения:</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lbl_connect">
+    <property name="geometry">
+     <rect>
+      <x>1130</x>
+      <y>450</y>
+      <width>161</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Соединения нет</string>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">

@@ -51,7 +51,7 @@ TempGraph::TempGraph(QWidget *parent)
 
     tmrupgraph->start();
     tmr_up_ports->start();
-    qDebug()<<cport_index.isValid();
+    qDebug()<<cur_port_index.isValid();
 }
 
 TempGraph::~TempGraph()
@@ -154,7 +154,7 @@ void TempGraph::serialPortInfo()
        info.append("Vendor ID:\t"+QString::number(portInfo.vendorIdentifier())+"\n");
        info.append("Наличие Device ID:\t"+hasDevice+"\n");
        info.append("QVendor ID:\t"+QString::number(portInfo.productIdentifier())+"\n");
-       //info.append(portInfo.portName()+"\n");
+       info.append("Имя порта:\t"+portInfo.portName()+"\n");
        info.append("\n");
     }
     msg = new QMessageBox();
@@ -218,29 +218,36 @@ void TempGraph::serial_ports_out()
 void TempGraph::on_tblOut_clicked(const QModelIndex &index)
 {
     //икали зацепку для процерки совершения выбора элемента в таблице
-    qDebug() << (cport_index.isValid());
-    cport_index = ui->tblOut->currentIndex();
-    qDebug()<<cport_index.isValid();
+    qDebug() << (cur_port_index.isValid());
+    cur_port_index = ui->tblOut->currentIndex();
+    qDebug()<<cur_port_index.isValid();
     //попытки выцепить данные напрямую через получаемый индекс
     //qDebug()<<cport_index;
-    //qDebug()<<cport_index.row();
+    qDebug()<<cur_port_index.row();
     //qDebug()<<modelOut->index(cport_index.row(),1).data().toInt(); // позволяет выцепить данные по индексу модели и сразу преобразовать к целому типу
     //qDebug()<<cport_index.data();
 }
 
 void TempGraph::on_btn_connect_port_clicked()
 {
-   /*if(connect_once){
+   if(connect_once && con_port_index.row() == ui->tblOut->currentIndex().row())
+   {
+      QMessageBox::information(this,"Ошибка","Вы уже подключены к этому порту.");
+      return;
+   }
+   if(connect_once){
        QMessageBox::information(this,"Ошибка","Вы уже подключены к порту.\n Сначала отключитесь от старого.");
-   }*/
+       return;
+   }
    QString port_name;
    qDebug()<<"Кнопка нажата";
-   qDebug()<<cport_index.isValid();
-   if(cport_index.isValid() == false)
+   qDebug()<<cur_port_index.isValid();
+   if(cur_port_index.isValid() == false)
        QMessageBox::information(this,"Ошибка","Вы не выбрали порт!");
    else
    {
        qDebug()<<"Порт выбран";
+       QSerialPortInfo port_to_connect;
         foreach(const QSerialPortInfo& portInfo, QSerialPortInfo::availablePorts())
         {
             qDebug()<<"Вошли в цекл по доступным портам";
@@ -249,28 +256,54 @@ void TempGraph::on_btn_connect_port_clicked()
             {
                 qDebug()<<"Вошли в условие 1";
                 //смотрим, совпадают ли соответствуищие id с выбранным в таблице
-                if(modelOut->index(cport_index.row(),1).data().toInt() == portInfo.vendorIdentifier() && modelOut->index(cport_index.row(),2).data().toInt() == portInfo.productIdentifier())
+                if(modelOut->index(cur_port_index.row(),1).data().toInt() == portInfo.vendorIdentifier() && modelOut->index(cur_port_index.row(),2).data().toInt() == portInfo.productIdentifier())
                    {
                         qDebug()<< "Вошли в условие 2";
                         //нужна ли данная функция? НЕТ ВОЗМОЖНОСТИ ПРОТЕСТИРОВАТЬ на практике
                         if(portInfo.isBusy())
                         {
                             QMessageBox::information(this,"Ошибка","Данный порт занят!");
+                            qDebug()<< "Порт занят";
+                            return;
                         }
+                        qDebug()<<"Нашли нужный порт";
                         qDebug()<<portInfo.portName();
-                        port_name = portInfo.portName();
+                        port_to_connect = portInfo;
+                        //port_name = portInfo.portName();
+                        port_is_available = true;
+                        qDebug()<<"Порт доступен для соединениия?" << (port_is_available ? "да":"нет");
                         break;
                    }
             }
         }
-        qDebug() << "вышли из цикла и подключаемся к порту";
+        qDebug() << "вышли из цикла,выделяем память под объект порта";
         port = new QSerialPort(this);
-        port_is_available = true;
         connect_once = true;
-             //port->setPort();
-            //port->setPortName(port_name);
-            qDebug()<<port;
-            // qDebug()<<port->portName();
-    }
+        qDebug()<<"Зафикисировали соединения с портом вообще?"<< (connect_once ? "да":"нет");
+        con_port_index = cur_port_index;//для пресечения повторного подключения
 
+        /* блок настройки порта */
+        if(port_is_available){
+            port->setPort(port_to_connect);
+
+            if(port_to_connect.description().length() == 0)
+                ui->lbl_connect->setText("Соединение с портом: \n  Системный \t" + port_to_connect.portName());
+            else
+                ui->lbl_connect->setText("Соединение с портом: \n" + port_to_connect.description() + "\t" + port_to_connect.portName());
+            qDebug()<<"Указали порт к подключению.";
+            qDebug()<<"Открываем порт";
+            if(port->open(QIODevice::ReadOnly))
+                qDebug()<<"Порт открыт только для чтения";
+            port->setBaudRate(QSerialPort::Baud9600);//установка скорости обменна данными
+            port->setDataBits(QSerialPort::Data8);//установка бита данных
+            port->setFlowControl(QSerialPort::NoFlowControl);//установка контроля потока
+            port->setParity(QSerialPort::NoParity);  //установка бита четности
+            port->setStopBits(QSerialPort::OneStop); //
+        }
+        else{
+            qDebug()<<"Ошибка доступа.Нужный порт не найден/не доступен";
+            QMessageBox::information(this,"Ошибка подключения к порту","Невозможно открыть данный порт");
+        }
+
+    }
 }
