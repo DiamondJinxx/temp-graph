@@ -10,6 +10,7 @@ TempGraph::TempGraph(QWidget *parent)
     /* блок инициализации  */
     tmr_up_ports      = new QTimer(this);
     tmrupgraph 		  = new QTimer();
+    tmr_serialread    = new QTimer();
     series    		  = new QLineSeries();
     chartView 		  = new QChartView(chart);
     chart     		  = new QChart();
@@ -24,6 +25,7 @@ TempGraph::TempGraph(QWidget *parent)
     /* блок начальных установок */
     tmr_up_ports->setInterval(100);
     tmrupgraph->setInterval(1000);
+    ui->lbl_port_status->hide();//скрываем индикацию, пока нет подключения к порту
     /* соединяем серию, чарт и его представления */
     chart->addSeries(series);
     chart->legend()->hide();
@@ -56,6 +58,10 @@ TempGraph::TempGraph(QWidget *parent)
 
 TempGraph::~TempGraph()
 {
+    if(port->isOpen()){
+        port->close();
+        qDebug()<<"Порт закрыт вместе с закрытием программы";
+    }
     delete ui;
 }
 
@@ -184,8 +190,10 @@ void TempGraph::serial_ports_out()
             //целяем нужную информацию
              description = portInfo.description();
             // qDebug() << description.length();
+
              if(description.length()== 0)
                  description = "Системный";
+
              vendor      = QString::number(portInfo.vendorIdentifier());
              device      = QString::number(portInfo.productIdentifier());
             //по индексам в модели цепляем нужные элементы
@@ -277,6 +285,7 @@ void TempGraph::on_btn_connect_port_clicked()
             }
         }
         qDebug() << "вышли из цикла,выделяем память под объект порта";
+        qDebug()<<"Порт для соединения: "<<port_to_connect.portName();
         port = new QSerialPort(this);
         connect_once = true;
         qDebug()<<"Зафикисировали соединения с портом вообще?"<< (connect_once ? "да":"нет");
@@ -290,10 +299,15 @@ void TempGraph::on_btn_connect_port_clicked()
                 ui->lbl_connect->setText("Соединение с портом: \n  Системный \t" + port_to_connect.portName());
             else
                 ui->lbl_connect->setText("Соединение с портом: \n" + port_to_connect.description() + "\t" + port_to_connect.portName());
+            ui->lbl_port_status->setText("Порт закрыт");
+            ui->lbl_port_status->show();
             qDebug()<<"Указали порт к подключению.";
             qDebug()<<"Открываем порт";
-            if(port->open(QIODevice::ReadOnly))
+            if(port->open(QIODevice::ReadOnly)){
                 qDebug()<<"Порт открыт только для чтения";
+                ui->lbl_port_status->setText("Порт открыт");
+                ui->lbl_port_status->show();
+            }
             port->setBaudRate(QSerialPort::Baud9600);//установка скорости обменна данными
             port->setDataBits(QSerialPort::Data8);//установка бита данных
             port->setFlowControl(QSerialPort::NoFlowControl);//установка контроля потока
@@ -305,5 +319,26 @@ void TempGraph::on_btn_connect_port_clicked()
             QMessageBox::information(this,"Ошибка подключения к порту","Невозможно открыть данный порт");
         }
 
+    }
+}
+
+void TempGraph::on_btn_desconnect_port_clicked()
+{
+    if(connect_once == false)
+        QMessageBox::information(this,"Ошибка","Вы не подключены ни к одному порту");
+    else
+    {
+        if(port->isOpen()){
+            qDebug()<<"Порт "+port->portName()+" закрывается";
+            port->close();
+            QString c = (port->isOpen() ? "открыт":"закрыт");
+
+            qDebug()<<"Состояние порта:  " + c;
+            connect_once = false;
+            port_is_available = false;
+            ui->lbl_connect->setText("Соединеия нет");
+            ui->lbl_port_status->setText("Порт закрыт");
+            ui->lbl_port_status->hide();
+        }
     }
 }

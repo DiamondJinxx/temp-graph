@@ -175,8 +175,8 @@
    <widget class="QWidget" name="verticalLayoutWidget_2">
     <property name="geometry">
      <rect>
-      <x>1080</x>
-      <y>520</y>
+      <x>1090</x>
+      <y>560</y>
       <width>251</width>
       <height>231</height>
      </rect>
@@ -215,6 +215,19 @@
     </property>
     <property name="text">
      <string>Соединения нет</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lbl_port_status">
+    <property name="geometry">
+     <rect>
+      <x>1130</x>
+      <y>520</y>
+      <width>121</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Поррт закрыт</string>
     </property>
    </widget>
   </widget>

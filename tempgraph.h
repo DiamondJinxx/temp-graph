@@ -29,12 +29,14 @@ class TempGraph : public QMainWindow
     bool gon = true; // контроль вывода графика
     bool port_is_available = false; // контроль соединения с выбранным портом.
     bool connect_once = false;
+    bool req = false; // наличие запроса данных от мк
     QSerialPort *port = nullptr;
     QStandardItemModel *modelOut; // модель вывода в бокс портов
     QChartView* chartView;
     QChart* chart;
     QTimer* tmr_up_ports;
     QTimer* tmrupgraph;
+    QTimer* tmr_serialread;
     QLineSeries* series;
     QValueAxis *axesX;
     QValueAxis *axesY;
@@ -65,6 +67,9 @@ private slots:
 
     void on_btn_connect_port_clicked();
 
+    void on_btn_desconnect_port_clicked();
+
+    void serialRead();
 private:
     Ui::TempGraph *ui;
 };
