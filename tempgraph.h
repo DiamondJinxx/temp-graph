@@ -22,14 +22,14 @@ class TempGraph : public QMainWindow
     Q_OBJECT
 
     int ports_count	  = 0;
-    QModelIndex cur_port_index;// индекс выбранного элемента в таблице
-    QModelIndex con_port_index;// индекс элемента(порта), к которому уже подключены
     int temp = 0; // текущая температура графика
     int sec  = 0; // секунды графика
     bool gon = true; // контроль вывода графика
     bool port_is_available = false; // контроль соединения с выбранным портом.
     bool connect_once = false;
     bool req = false; // наличие запроса данных от мк
+    QModelIndex cur_port_index;// индекс выбранного элемента в таблице
+    QModelIndex con_port_index;// индекс элемента(порта), к которому уже подключены
     QSerialPort *port = nullptr;
     QStandardItemModel *modelOut; // модель вывода в бокс портов
     QChartView* chartView;
@@ -70,6 +70,10 @@ private slots:
     void on_btn_desconnect_port_clicked();
 
     void serialRead();
+    void on_btn_query_clicked();
+
+    void on_btn_stopquery_clicked();
+
 private:
     Ui::TempGraph *ui;
 };

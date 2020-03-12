@@ -25,6 +25,8 @@ TempGraph::TempGraph(QWidget *parent)
     /* блок начальных установок */
     tmr_up_ports->setInterval(100);
     tmrupgraph->setInterval(1000);
+    //то , что таймер запроса данных и таймер отрисовка графика совпадают интервалами срабатывания внесет ошибку
+    tmr_serialread->setInterval(1000);
     ui->lbl_port_status->hide();//скрываем индикацию, пока нет подключения к порту
     /* соединяем серию, чарт и его представления */
     chart->addSeries(series);
@@ -50,10 +52,11 @@ TempGraph::TempGraph(QWidget *parent)
     ui->graph_latout->addWidget(chartView);
     connect(tmrupgraph,SIGNAL(timeout()),this,SLOT(updateGraph()));
     connect(tmr_up_ports,SIGNAL(timeout()),this,SLOT(serial_ports_out()));
+    connect(tmr_serialread,SIGNAL(timeout()),this,SLOT(serialRead()));
 
     tmrupgraph->start();
     tmr_up_ports->start();
-    qDebug()<<cur_port_index.isValid();
+    tmr_serialread->start();
 }
 
 TempGraph::~TempGraph()
@@ -342,3 +345,26 @@ void TempGraph::on_btn_desconnect_port_clicked()
         }
     }
 }
+
+void TempGraph::serialRead()
+{
+    //qDebug()<<req<<connect_once;
+    if(req && connect_once)
+    {
+        qDebug()<<"Чтение с порта каждую секунду";
+    }
+}
+void TempGraph::on_btn_query_clicked()
+{
+   req = true;
+   qDebug()<<req<<connect_once;
+   qDebug()<<"Наличие запроса данных от МК"<<req;
+}
+
+void TempGraph::on_btn_stopquery_clicked()
+{
+   req = false;
+   qDebug()<<req<<connect_once;
+   qDebug()<<"Отсутствие запроса данных от МК"<<req;
+}
+
