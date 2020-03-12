@@ -25,7 +25,7 @@ TempGraph::TempGraph(QWidget *parent)
     /* блок начальных установок */
     tmr_up_ports->setInterval(100);
     tmrupgraph->setInterval(1000);
-    //то , что таймер запроса данных и таймер отрисовка графика совпадают интервалами срабатывания внесет ошибку
+    //то , что таймер запроса данных и таймер отрисовка графика совпадают интервалами срабатывания внесет ошибку, хотя скорее это вовсе невозможно реализовать
     tmr_serialread->setInterval(1000);
     ui->lbl_port_status->hide();//скрываем индикацию, пока нет подключения к порту
     /* соединяем серию, чарт и его представления */
@@ -156,14 +156,17 @@ void TempGraph::serialPortInfo()
      //qDebug()<<"Сам vendor: "<<portInfo.vendorIdentifier()<<"\n";
      //  qDebug()<<"Имеется Devics id?: "<<portInfo.hasProductIdentifier()<<"\n";
      //  qDebug()<<"Device Id: "<<portInfo.productIdentifier()<<"\n";
-       info.append("Описание порта:\t"+portInfo.description()+"\n");
+       if(portInfo.description().length() == 0)
+            info.append("Описание порта: \t Системный\n");
+       else
+            info.append("Описание порта: \t"+portInfo.description()+"\n");
        QString hasVendor = portInfo.hasVendorIdentifier() ? "имеется":"не имеется";
        QString hasDevice = portInfo.hasProductIdentifier() ? "имеется":"не имееется";
-       info.append("Наличие Vendor ID:\t"+hasVendor+"\n");
+       info.append("Наличие Vendor ID: \t"+hasVendor+"\n");
        info.append("Vendor ID:\t"+QString::number(portInfo.vendorIdentifier())+"\n");
-       info.append("Наличие Device ID:\t"+hasDevice+"\n");
-       info.append("QVendor ID:\t"+QString::number(portInfo.productIdentifier())+"\n");
-       info.append("Имя порта:\t"+portInfo.portName()+"\n");
+       info.append("Наличие Device ID: \t"+hasDevice+"\n");
+       info.append("QVendor ID: \t"+QString::number(portInfo.productIdentifier())+"\n");
+       info.append("Имя порта: \t"+portInfo.portName()+"\n");
        info.append("\n");
     }
     msg = new QMessageBox();
@@ -342,16 +345,19 @@ void TempGraph::on_btn_desconnect_port_clicked()
             ui->lbl_connect->setText("Соединеия нет");
             ui->lbl_port_status->setText("Порт закрыт");
             ui->lbl_port_status->hide();
+            req = false;
         }
     }
 }
-
+//по нормальному это делается через поток, со всеми нужными проверками запросов
 void TempGraph::serialRead()
 {
     //qDebug()<<req<<connect_once;
     if(req && connect_once)
     {
         qDebug()<<"Чтение с порта каждую секунду";
+        QByteArray serialData = port->readAll();
+        qDebug()<<serialData;
     }
 }
 void TempGraph::on_btn_query_clicked()
