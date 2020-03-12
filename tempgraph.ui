@@ -130,6 +130,20 @@
        </property>
       </widget>
      </item>
+     <item>
+      <widget class="QPushButton" name="btn_connect_port">
+       <property name="text">
+        <string>Подключиться к порту</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btn_desconnect_port">
+       <property name="text">
+        <string>Отключиться от порта</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </widget>
    <widget class="QLabel" name="lbl_time">
