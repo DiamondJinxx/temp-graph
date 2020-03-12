@@ -1,6 +1,5 @@
 #include "tempgraph.h"
 #include "ui_tempgraph.h"
-//#define SEC (float)0.5 // в зависимости от интервала таймера графика нужно менять эту переменную для вывода секунд на оси графика
 
 TempGraph::TempGraph(QWidget *parent)
     : QMainWindow(parent)
@@ -25,6 +24,11 @@ TempGraph::TempGraph(QWidget *parent)
     /* блок начальных установок */
     tmr_up_ports->setInterval(100);
     tmrupgraph->setInterval(1000);
+
+    /* Отрисовку графика можно соединить с сигналом от порта, ось времени придется
+    переделывать с более сложными вычислениями, но тем не менее это будет правильнее
+    */
+
     //то , что таймер запроса данных и таймер отрисовка графика совпадают интервалами срабатывания внесет ошибку, хотя скорее это вовсе невозможно реализовать
     tmr_serialread->setInterval(1000);
     ui->lbl_port_status->hide();//скрываем индикацию, пока нет подключения к порту
@@ -52,7 +56,7 @@ TempGraph::TempGraph(QWidget *parent)
     ui->graph_latout->addWidget(chartView);
     connect(tmrupgraph,SIGNAL(timeout()),this,SLOT(updateGraph()));
     connect(tmr_up_ports,SIGNAL(timeout()),this,SLOT(serial_ports_out()));
-    connect(tmr_serialread,SIGNAL(timeout()),this,SLOT(serialRead()));
+    connect(port,SIGNAL(timeout()),this,SLOT(serialRead()));
 
     tmrupgraph->start();
     tmr_up_ports->start();
@@ -365,6 +369,7 @@ void TempGraph::on_btn_query_clicked()
    req = true;
    qDebug()<<req<<connect_once;
    qDebug()<<"Наличие запроса данных от МК"<<req;
+   // connect(port,SIGNAL(readyRead()),this,SLOT(serialRead()));
 }
 
 void TempGraph::on_btn_stopquery_clicked()
@@ -372,5 +377,6 @@ void TempGraph::on_btn_stopquery_clicked()
    req = false;
    qDebug()<<req<<connect_once;
    qDebug()<<"Отсутствие запроса данных от МК"<<req;
+  // disconnect(port,SIGNAL(readyRead()),this,SLOT(serialRead()));
 }
 
