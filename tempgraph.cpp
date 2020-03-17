@@ -11,8 +11,8 @@ TempGraph::TempGraph(QWidget *parent)
     tmrupgraph 		  = new QTimer();
     tmr_serialread    = new QTimer();
     series    		  = new QLineSeries();
-    chartView 		  = new QChartView(chart);
     chart     		  = new QChart();
+    chartView 		  = new QChartView(chart,this);
     axesX     		  = new QValueAxis();
     axesY     		  = new QValueAxis();
     modelOut  		  = new QStandardItemModel(1, 3, this);
@@ -56,7 +56,7 @@ TempGraph::TempGraph(QWidget *parent)
     ui->graph_latout->addWidget(chartView);
     connect(tmrupgraph,SIGNAL(timeout()),this,SLOT(updateGraph()));
     connect(tmr_up_ports,SIGNAL(timeout()),this,SLOT(serial_ports_out()));
-    connect(port,SIGNAL(timeout()),this,SLOT(serialRead()));
+    connect(tmr_serialread,SIGNAL(timeout()),this,SLOT(serialRead()));
 
     tmrupgraph->start();
     tmr_up_ports->start();
@@ -297,7 +297,6 @@ void TempGraph::on_btn_connect_port_clicked()
         qDebug() << "вышли из цикла,выделяем память под объект порта";
         qDebug()<<"Порт для соединения: "<<port_to_connect.portName();
         port = new QSerialPort(this);
-        connect_once = true;
         qDebug()<<"Зафикисировали соединения с портом вообще?"<< (connect_once ? "да":"нет");
         con_port_index = cur_port_index;//для пресечения повторного подключения
 
@@ -314,6 +313,7 @@ void TempGraph::on_btn_connect_port_clicked()
             qDebug()<<"Указали порт к подключению.";
             qDebug()<<"Открываем порт";
             if(port->open(QIODevice::ReadOnly)){
+                connect_once = true;
                 qDebug()<<"Порт открыт только для чтения";
                 ui->lbl_port_status->setText("Порт открыт");
                 ui->lbl_port_status->show();
